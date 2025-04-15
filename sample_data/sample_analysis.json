@@ -1,0 +1,57 @@
+{
+  "model_used": "gpt-3.5-turbo",
+  "match_plan": {
+    "attack": {
+      "team_mentality": {
+        "value": "Aggressive",
+        "reason": "Rakibin savunması zayıf, hücum gücümüz yüksek. Maçı kazanmak için agresif oynamalıyız."
+      },
+      "passing_focus": {
+        "value": "Wide",
+        "reason": "Rakibin kanatlardan atak yaptığı gözlemlendi, geniş oynamalı ve kanatları kullanmalıyız."
+      },
+      "passing_style": {
+        "value": "Quick",
+        "reason": "Hava sıcak, hızlı paslarla rakibi yorarak üstünlük sağlamalıyız."
+      },
+      "force_counterattack": {
+        "value": "Yes",
+        "reason": "Rakibin hücum gücü yüksek, hızlı kontratak yaparak boş alanları değerlendirmeliyiz."
+      }
+    },
+    "defense": {
+      "pressing_style": {
+        "value": "High",
+        "reason": "Rakibin savunması zayıf, yüksek pres yaparak rakibe baskı kurmalıyız."
+      },
+      "tackling_style": {
+        "value": "Aggressive",
+        "reason": "Rakibin hücum gücü yüksek, agresif bir şekilde top kazanmaya çalışmalıyız."
+      },
+      "marking_style": {
+        "value": "Tight",
+        "reason": "Rakibin etkili hücum oyuncularını sıkı bir şekilde markaj altında tutmalıyız."
+      },
+      "offside_trap": {
+        "value": "No",
+        "reason": "Rakibin hücum hattı hızlı, offside tuzaklarından kaçınarak tehlikeleri engellemeliyiz."
+      }
+    }
+  },
+  "losing_plan": {
+    "value": "Do not lose focus and stick to the game plan",
+    "reason": "Maçı kaybetme lüksümüz yok, odaklanmış ve plana sadık kalmalıyız."
+  },
+  "attacking_strategy": {
+    "value": "Utilize wide areas, quick passing and aggressive attacks",
+    "reason": "Geniş alanları kullanarak, hızlı paslar ve agresif hücumlarla rakibi zorlamalıyız."
+  },
+  "defensive_strategy": {
+    "value": "High pressing, aggressive tackling and tight marking",
+    "reason": "Yüksek pres yaparak, agresif müdahaleler ve sıkı markajla rakibi etkisiz hale getirmeliyiz."
+  },
+  "second_half_plan": {
+    "value": "Maintain intensity and look for opportunities to seal the win",
+    "reason": "Maçın ikinci yarısında da yoğunluğumuzu korumalı, fırsatları değerlendirerek galibiyeti garantilemeliyiz."
+  }
+}
