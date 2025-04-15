@@ -13,7 +13,6 @@ def home():
 def analyze():
     data = request.get_json()
 
-    # Zorunlu alanları kontrol et
     required_fields = ["prompt", "user_type", "model"]
     for field in required_fields:
         if field not in data:
@@ -23,22 +22,43 @@ def analyze():
     user_type = data["user_type"]
     requested_model = data["model"]
 
-    # user_type = trial ise GPT-4 isteğini engelle
-    if user_type == "trial" and requested_model == "gpt-4":
-        model_used = "gpt-3.5-turbo"
-    else:
-        model_used = requested_model
+    # Trial kullanıcı GPT-4 isterse downgrade
+    model_used = "gpt-3.5-turbo" if user_type == "trial" and requested_model == "gpt-4" else requested_model
+
+    # Eğer structured_tactical_json istendiyse system mesajı ekle
+    messages = []
+
+    if "response_format" in data and data["response_format"] == "structured_tactical_json":
+        messages.append({
+            "role": "system",
+            "content": (
+                "Sen bir futbol menajerlik taktik analiz uzmanısın. "
+                "Kullanıcıdan gelen verilerle yalnızca aşağıdaki JSON formatında yanıt ver:\n"
+                "{\n"
+                "  \"match_plan\": {\"attack\": {...}, \"defense\": {...}},\n"
+                "  \"losing_plan\": {...},\n"
+                "  \"attacking_strategy\": {...},\n"
+                "  \"defensive_strategy\": {...},\n"
+                "  \"second_half_plan\": {...}\n"
+                "}\n"
+                "Her value kısa ve net, her reason detaylı açıklayıcı olsun. "
+                "Sadece JSON olarak yanıt döndür. Açıklama, markdown veya metin E K L E M E."
+            )
+        })
+
+    # Kullanıcı promptu
+    messages.append({"role": "user", "content": prompt})
 
     try:
         response = openai.ChatCompletion.create(
             model=model_used,
-            messages=[{"role": "user", "content": prompt}],
+            messages=messages,
             temperature=0.7
         )
 
         return jsonify({
-            "response": response.choices[0].message["content"],
-            "model_used": model_used
+            "model_used": model_used,
+            "response": response.choices[0].message["content"]
         })
 
     except Exception as e:
