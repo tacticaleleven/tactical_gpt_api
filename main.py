@@ -30,7 +30,6 @@ def analyze():
     # Mesajlar dizisi hazırlanıyor
     messages = []
 
-    # response_format kontrolü
     response_format = data.get("response_format")
 
     if response_format == "structured_tactical_json":
@@ -41,13 +40,14 @@ def analyze():
                 "Kullanıcıdan gelen verilerle yalnızca aşağıdaki JSON formatında yanıt ver:\n"
                 "{\n"
                 "  \"match_plan\": {\"attack\": {...}, \"defense\": {...}},\n"
-                "  \"losing_plan\": {...},\n"
-                "  \"attacking_strategy\": {...},\n"
-                "  \"defensive_strategy\": {...},\n"
-                "  \"second_half_plan\": {...}\n"
+                "  \"second_half_plan\": {\"if_winning\": {...}, \"if_losing\": {...}},\n"
+                "  \"general_strategy\": {\"attack\": {...}, \"defense\": {...}},\n"
+                "  \"losing_plan\": {...}\n"
                 "}\n"
                 "Her value kısa ve net, her reason detaylı açıklayıcı olsun. "
-                "Sadece JSON olarak yanıt döndür. Açıklama, markdown veya metin E K L E M E."
+                "Sadece JSON olarak yanıt döndür. Açıklama, markdown veya metin E K L E M E.\n"
+                "📌 Dikkat: 'general_strategy' alanı, 'match_plan' ile çelişmemelidir. "
+                "Genel strateji, maç başı taktiğini desteklemeli ve tutarlı olmalıdır."
             )
         })
 
@@ -59,10 +59,9 @@ def analyze():
                 "Kullanıcıdan gelen maç analiz verilerine göre aşağıdaki JSON formatında yanıt ver:\n"
                 "{\n"
                 "  \"match_plan\": {\"attack\": {...}, \"defense\": {...}},\n"
-                "  \"losing_plan\": {...},\n"
-                "  \"attacking_strategy\": {...},\n"
-                "  \"defensive_strategy\": {...},\n"
-                "  \"second_half_plan\": {...}\n"
+                "  \"second_half_plan\": {\"if_winning\": {...}, \"if_losing\": {...}},\n"
+                "  \"general_strategy\": {\"attack\": {...}, \"defense\": {...}},\n"
+                "  \"losing_plan\": {...}\n"
                 "}\n\n"
                 "Her alan şunları içermelidir:\n"
                 "- focus: Ne yapılmalı? (kısa ve net)\n"
@@ -79,6 +78,8 @@ def analyze():
                 "- Top Çalma Tarzı: Kolay, Normal, Zor\n"
                 "- Markaj Tarzı: Bölgesel, Adam Adama\n"
                 "- Ofsayt Taktiği Uygula: Açık, Kapalı\n\n"
+                "📌 'general_strategy' mutlaka 'match_plan' ile uyumlu olmalıdır. "
+                "Çelişen ayar veya taktik kullanma.\n"
                 "🛑 Bu kelimelerin dışında ifade veya yorum kullanma. "
                 "Yanıt sadece JSON olsun. Açıklama, markdown veya yorum ekleme."
             )
@@ -96,11 +97,10 @@ def analyze():
 
         raw_output = response.choices[0].message["content"]
 
-        # JSON string dönmüşse parse etmeye çalış
         try:
             parsed_output = json.loads(raw_output)
         except json.JSONDecodeError:
-            parsed_output = raw_output  # string olarak bırak
+            parsed_output = raw_output
 
         return jsonify({
             "model_used": model_used,
