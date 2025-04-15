@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import openai
 import os
+import json
 
 app = Flask(__name__)
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -13,6 +14,7 @@ def home():
 def analyze():
     data = request.get_json()
 
+    # Zorunlu alanlar kontrolü
     required_fields = ["prompt", "user_type", "model"]
     for field in required_fields:
         if field not in data:
@@ -25,10 +27,11 @@ def analyze():
     # Trial kullanıcı GPT-4 isterse downgrade
     model_used = "gpt-3.5-turbo" if user_type == "trial" and requested_model == "gpt-4" else requested_model
 
-    # Eğer structured_tactical_json istendiyse system mesajı ekle
+    # Mesajlar dizisi hazırlanıyor
     messages = []
 
-    if "response_format" in data and data["response_format"] == "structured_tactical_json":
+    # Eğer structured format istendiyse system mesajı ekleniyor
+    if data.get("response_format") == "structured_tactical_json":
         messages.append({
             "role": "system",
             "content": (
@@ -46,7 +49,7 @@ def analyze():
             )
         })
 
-    # Kullanıcı promptu
+    # Kullanıcı mesajı
     messages.append({"role": "user", "content": prompt})
 
     try:
@@ -56,9 +59,17 @@ def analyze():
             temperature=0.7
         )
 
+        raw_output = response.choices[0].message["content"]
+
+        # JSON string dönmüşse parse etmeye çalış
+        try:
+            parsed_output = json.loads(raw_output)
+        except json.JSONDecodeError:
+            parsed_output = raw_output  # string olarak bırak
+
         return jsonify({
             "model_used": model_used,
-            "response": response.choices[0].message["content"]
+            "response": parsed_output
         })
 
     except Exception as e:
