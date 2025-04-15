@@ -12,18 +12,35 @@ def home():
 @app.route("/analyze", methods=["POST"])
 def analyze():
     data = request.get_json()
-    prompt = data.get("prompt")
 
-    if not prompt:
-        return jsonify({"error": "Prompt is missing"}), 400
+    # Zorunlu alanları kontrol et
+    required_fields = ["prompt", "user_type", "model"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"{field} is missing"}), 400
+
+    prompt = data["prompt"]
+    user_type = data["user_type"]
+    requested_model = data["model"]
+
+    # user_type = trial ise GPT-4 isteğini engelle
+    if user_type == "trial" and requested_model == "gpt-4":
+        model_used = "gpt-3.5-turbo"
+    else:
+        model_used = requested_model
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=model_used,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7
         )
-        return jsonify(response.choices[0].message)
+
+        return jsonify({
+            "response": response.choices[0].message["content"],
+            "model_used": model_used
+        })
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
