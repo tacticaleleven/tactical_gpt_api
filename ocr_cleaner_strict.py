@@ -25,7 +25,11 @@ def clean_ocr_lines_strict(raw_lines):
         return line.strip().isdigit()
 
     def is_commentary(line):
-        return any(punc in line for punc in [".", "!", "?"]) and len(line.split()) > 3
+        words = line.strip().split()
+        return (
+            any(punc in line for punc in [".", "!", "?"])
+            or len(words) >= 4
+        )
 
     def is_useless_number(line):
         return re.search(r"\+.*[MB]", line) is not None
