@@ -1,1 +1,0 @@
-web: python tactical_ocr_api.py
