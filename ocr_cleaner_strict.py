@@ -19,7 +19,7 @@ def clean_ocr_lines_strict(raw_lines):
         return re.match(r"\d{2}\.\d{2} \d{2}:\d{2}", line.strip()) is not None
 
     def is_garbage(line):
-        return re.fullmatch(r"[sS\$]+", line.strip()) is not None
+        return re.fullmatch(r"[sS\$kK]+", line.strip()) is not None
 
     def is_integer_only(line):
         return line.strip().isdigit()
