@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
-from ocr_cleaner_strict import clean_ocr_lines_strict  # Temizleyici modül
+from ocr_cleaner_strict import clean_ocr_lines_strict
+
+import os
 
 app = Flask(__name__)
 
@@ -15,4 +17,5 @@ def clean_ocr():
     return jsonify({"cleaned_lines": cleaned_lines})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
