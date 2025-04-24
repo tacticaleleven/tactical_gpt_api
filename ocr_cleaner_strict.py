@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 def clean_ocr_lines_strict(raw_lines):
     IGNORED_WORDS = [
@@ -30,9 +31,12 @@ def clean_ocr_lines_strict(raw_lines):
     def is_useless_number(line):
         return re.search(r"\+.*[MB]", line) is not None
 
+    def normalize_tr(text):
+        return unicodedata.normalize('NFD', text).encode('ascii', 'ignore').decode('utf-8').lower()
+
     def is_ignored_line(line):
-        lower = line.lower()
-        return any(word in lower for word in IGNORED_WORDS)
+        normalized = normalize_tr(line)
+        return any(word in normalized for word in IGNORED_WORDS)
 
     def is_valid_form(line):
         compact = line.replace(" ", "").strip()
