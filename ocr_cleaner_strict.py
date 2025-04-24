@@ -1,5 +1,4 @@
 import re
-import unicodedata
 
 def clean_ocr_lines_strict(raw_lines):
     IGNORED_WORDS = [
@@ -32,7 +31,17 @@ def clean_ocr_lines_strict(raw_lines):
         return re.search(r"\+.*[MB]", line) is not None
 
     def normalize_tr(text):
-        return unicodedata.normalize('NFD', text).encode('ascii', 'ignore').decode('utf-8').lower()
+        replacements = {
+            "Ç": "C", "ç": "c",
+            "Ğ": "G", "ğ": "g",
+            "İ": "I", "ı": "i",
+            "Ö": "O", "ö": "o",
+            "Ş": "S", "ş": "s",
+            "Ü": "U", "ü": "u"
+        }
+        for src, target in replacements.items():
+            text = text.replace(src, target)
+        return text.lower()
 
     def is_ignored_line(line):
         normalized = normalize_tr(line)
