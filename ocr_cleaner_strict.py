@@ -28,7 +28,7 @@ def clean_ocr_lines_strict(raw_lines):
         words = line.strip().split()
         return (
             any(punc in line for punc in [".", "!", "?"]) and len(words) > 3
-        )
+        ) or len(words) > 5
 
     def is_useless_number(line):
         return re.search(r"\+.*[MB]", line) is not None
