@@ -12,14 +12,14 @@ def clean_ocr_lines_strict(raw_lines):
     ovr_indices = []
 
     def normalize_ovr(line):
-        match = re.search(r"ovr[:\\s]*([\\d.,]+)", line, re.IGNORECASE)
+        match = re.search(r"ovr[:\s]*([\d.,]+)", line, re.IGNORECASE)
         return f"OVR {match.group(1)}" if match else None
 
     def is_datetime(line):
-        return re.match(r"\\d{2}\\.\\d{2} \\d{2}:\\d{2}", line.strip()) is not None
+        return re.match(r"\d{2}\.\d{2} \d{2}:\d{2}", line.strip()) is not None
 
     def is_garbage(line):
-        return re.fullmatch(r"[sS\\$]+", line.strip()) is not None
+        return re.fullmatch(r"[sS\$]+", line.strip()) is not None
 
     def is_integer_only(line):
         return line.strip().isdigit()
@@ -28,7 +28,7 @@ def clean_ocr_lines_strict(raw_lines):
         return any(punc in line for punc in [".", "!", "?"]) and len(line.split()) > 3
 
     def is_useless_number(line):
-        return re.search(r"\\+.*[MB]", line) is not None
+        return re.search(r"\+.*[MB]", line) is not None
 
     def is_ignored_line(line):
         lower = line.lower()
