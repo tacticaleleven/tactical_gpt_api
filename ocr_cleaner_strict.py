@@ -45,7 +45,8 @@ def clean_ocr_lines_strict(raw_lines):
 
     def is_ignored_line(line):
         normalized = normalize_tr(line)
-        return any(word in normalized for word in IGNORED_WORDS)
+        normalized_ignored = [normalize_tr(w) for w in IGNORED_WORDS]
+        return any(word in normalized for word in normalized_ignored)
 
     def is_valid_form(line):
         compact = line.replace(" ", "").strip()
