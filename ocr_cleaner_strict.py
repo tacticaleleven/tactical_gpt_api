@@ -27,8 +27,7 @@ def clean_ocr_lines_strict(raw_lines):
     def is_commentary(line):
         words = line.strip().split()
         return (
-            any(punc in line for punc in [".", "!", "?"])
-            or len(words) >= 4
+            any(punc in line for punc in [".", "!", "?"]) and len(words) > 3
         )
 
     def is_useless_number(line):
