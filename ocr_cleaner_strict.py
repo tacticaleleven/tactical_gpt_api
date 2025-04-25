@@ -1,6 +1,7 @@
 import re
 
 def clean_ocr_lines_strict(raw_lines):
+    # 🗒️ IGNORE listesi: İstenmeyen sabit kelimeler
     IGNORED_WORDS = [
         "maç ön izleme", "maç ôn izleme", "genel bakış", "genel bakiş",
         "diziliş", "takım", "takim", "hazırlık", "hazırlik",
@@ -34,6 +35,9 @@ def clean_ocr_lines_strict(raw_lines):
     def is_useless_number(line):
         return re.search(r"\+.*[MB]", line) is not None
 
+    def is_one_letter(line):
+        return len(line.strip()) == 1
+
     def normalize_tr(text):
         replacements = {
             "Ç": "C", "ç": "c",
@@ -64,28 +68,34 @@ def clean_ocr_lines_strict(raw_lines):
 
     for line in raw_lines:
         stripped = line.strip()
+
+        # ❌ Filtreleme kuralları
         if is_ignored_line(stripped): continue
         if is_datetime(stripped): continue
         if is_garbage(stripped): continue
         if is_integer_only(stripped): continue
         if is_commentary(stripped): continue
         if is_useless_number(stripped): continue
+        if is_one_letter(stripped): continue  # ✅ EKLENDİ: Tek karakterli satırlar (G, L vs)
 
+        # ✅ OVR normalizasyonu
         normalized = normalize_ovr(stripped)
         if normalized:
             cleaned_lines.append(normalized)
             ovr_indices.append(len(cleaned_lines) - 1)
             continue
 
+        # ✅ FORM kontrolü (GMB gibi)
         is_form, fixed_form = is_valid_form(stripped)
         if is_form:
             cleaned_lines.append(fixed_form)
             form_lines.append(fixed_form)
             continue
 
+        # ✅ Geçen her şeyi ekle
         cleaned_lines.append(stripped)
 
-    # OVR varsa ama form yoksa araya "-----" ekle
+    # ❗ Eğer OVR varsa ama FORM yoksa boş form yer tutucu ekle
     if not form_lines and ovr_indices:
         last_ovr_index = ovr_indices[-1]
         cleaned_lines.insert(last_ovr_index + 1, "-----")
