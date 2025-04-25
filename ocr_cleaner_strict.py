@@ -6,7 +6,7 @@ def clean_ocr_lines_strict(raw_lines):
         "maç ön izleme", "maç ôn izleme", "genel bakış", "genel bakiş",
         "diziliş", "takım", "takim", "hazırlık", "hazırlik",
         "rakip", "rakíp", "ligi", "form", "elit lig", "kupa",
-        "txt", "CopyEdit"
+        "hazırlk"
     ]
 
     cleaned_lines = []
