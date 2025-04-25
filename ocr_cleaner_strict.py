@@ -48,7 +48,7 @@ def clean_ocr_lines_strict(raw_lines):
     # ✅ KURAL 7: Doğal dil yorum cümleleri
     def is_commentary(line):
         words = line.strip().split()
-        if any(punc in line for punc in [".", "!", "?"]) and len(words) ≥ 3:
+        if any(punc in line for punc in [".", "!", "?"]) and len(words) >= 3:
             return True
         return len(words) > 5
 
