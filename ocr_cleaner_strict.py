@@ -28,9 +28,15 @@ def clean_ocr_lines_strict(raw_lines):
 
     def is_commentary(line):
         words = line.strip().split()
-        if any(punc in line for punc in [".", "!", "?"]) and len(words) > 3:
+        # ✅ EKLENDİ: Tek kelimelik ama noktalama işaretiyle biten satır (örnek: "değerlendir!")
+        if len(words) == 1 and any(line.strip().endswith(p) for p in ['.', '!', '?']):
             return True
-        return len(words) > 5
+        # Uzun cümleler
+        if any(p in line for p in ['.', '!', '?']) and len(words) >= 3:
+            return True
+        if len(words) >= 5:
+            return True
+        return False
 
     def is_useless_number(line):
         return re.search(r"\+.*[MB]", line) is not None
